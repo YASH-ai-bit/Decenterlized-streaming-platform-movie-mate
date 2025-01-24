@@ -1,0 +1,68 @@
+/* Overall Header Styling */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #171717; /* Dark background */
+  color: #ffffff; /* White text */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Left Section: Logo and Slogan */
+.header-left {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+}
+
+.brand-slogan {
+  font-size: 1rem;
+  font-weight: 200;
+  color: #ffffff;
+}
+
+/* Navigation Menu */
+.header-nav ul {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.header-nav li {
+  margin: 0 15px;
+}
+
+.header-nav a {
+  text-decoration: none;
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 200;
+  transition: color 0.3s ease;
+}
+
+.header-nav a:hover {
+  color: #D90C4D; /* Highlight hover effect */
+}
+
+/* Icons */
+.icons {
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0.5px;
+}
+
+/* Hover Effect for Icons */
+.icon:hover {
+  filter:none;
+  color:#D90C4D;
+  transform:scale(1.1);
+}
