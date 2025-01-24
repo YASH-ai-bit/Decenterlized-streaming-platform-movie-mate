@@ -27,6 +27,19 @@
   color: #ffffff;
 }
 
+/* Highlighted words */
+.brand-slogan .highlight {
+  font-weight: bold; /* Make words bold */
+  transition: transform 0.2s ease, color 0.3s ease; /* Add smooth transition for hover effects */
+  display: inline-block; /* Ensures transform works properly */
+}
+
+/* Hover effect for highlighted words */
+.brand-slogan .highlight:hover {
+  color: #D90C4D; /* Red color on hover */
+  transform: scale(1.05); /* Slightly enlarge the word */
+}
+
 /* Navigation Menu */
 .header-nav ul {
   display: flex;
@@ -62,7 +75,7 @@
 
 /* Hover Effect for Icons */
 .icon:hover {
-  filter:none;
-  color:#D90C4D;
-  transform:scale(1.1);
+  filter: none;
+  color: #D90C4D;
+  transform: scale(1.1);
 }
