@@ -65,7 +65,7 @@ const TopFold = () => {
 
         <div className="text-content">
           <h3 className="logo-grid-title">WATCH WITH FRIENDS</h3>
-          <h1>A new way to watch together</h1>
+          <h1>A new way to <span className="highlight-watch-together"><span className="highlight-watch-together:hover">Watch Together</span></span> .</h1>
           <p>
             WhiteBoard is a new way to watch TV with your friends online.
             <br />
