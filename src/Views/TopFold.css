@@ -4,15 +4,14 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: auto;
+  height: 100vh;
   background-color: #171717;
   color: #ffffff;
-  padding: 20px;
-  border-radius: 10px;
-  margin: auto;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  padding: 0;
+  margin: 0;
   width: 100%;
-  max-width: 1200px;
+  box-sizing: border-box;
+  max-width: 100%;
 }
 
 /* Header Section (Navigation Bar) */
@@ -21,6 +20,7 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  margin-bottom: 60px;
   border-bottom: 2px solid white;
 }
 
@@ -82,28 +82,34 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  margin-top: 30px;
+  margin-top: 40px;
+  flex-wrap: wrap; /* Ensures wrapping on smaller screens */
 }
 
 .video-section {
   flex: 1;
+  display: flex;
+  justify-content: center; /* Centers the video on smaller screens */
 }
 
 .video-player {
   width: 100%;
+  max-width: 800px; /* Prevents the video from being too wide */
   border-radius: 5px;
+  margin-left: 30px; /* Removed large margin */
 }
 
 .text-content {
   flex: 1;
   color: white;
-  padding: 0 20px;
+  padding: 0 60px;
   text-align: left;
+  margin-bottom: 80px;
 }
 
 .text-content h1 {
   font-size: 2.2rem;
-  margin-bottom: 0px;
+  margin-bottom: 10px;
 }
 
 .text-content p {
@@ -135,6 +141,8 @@
   flex-direction: column;
   align-items: center;
   margin-top: 40px;
+  background-color: #171717; /* Ensure the background is black */
+  padding: 20px 0; /* Add padding to avoid logos sticking to the edges */
 }
 
 .logo-grid-title {
@@ -149,7 +157,7 @@
   display: flex;
   gap: 30px;
   justify-content: center;
-  flex-wrap: nowrap;
+  flex-wrap: wrap; /* Allow logos to wrap on smaller screens */
 }
 
 .logo-grid-item {
@@ -203,6 +211,7 @@
 
   .text-content h1 {
     font-size: 1.8rem;
+    margin-bottom: 5px;
   }
 
   .cta-button {
@@ -246,4 +255,20 @@
 .highlight-red:hover {
   color: #d90c4d;
   transform: scale(1.02);
+}
+
+/* Apply the blur effect */
+.background-content.blurred {
+  filter: blur(20px);
+  pointer-events: none;
+}
+
+.popup-container {
+  z-index: 10;
+}
+
+.background-content.blurred .main-content,
+.background-content.blurred .header,
+.background-content.blurred .logo-grid-section {
+  background-color: rgba(0, 0, 0, 0.5);
 }

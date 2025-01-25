@@ -12,13 +12,31 @@
     align-items: center;
     flex-direction: column;
     min-height: 100vh; /* Full viewport height */
+    padding: 0; /* Ensure no padding around */
+    box-sizing: border-box;
   }
   
-  
-  /* Responsive Adjustment for Homepage */
+  /* Adjust for mobile */
   @media only screen and (max-width: 768px) {
     .WB-homepage {
-      padding: 20px;
+      margin-top: 20px; /* Less margin on smaller screens */
+      padding: 15px;
     }
+  
+    .WB-homepage h1 {
+      font-size: 1.8rem;
+    }
+  }
+  
+  @media only screen and (max-width: 1024px) {
+    .WB-homepage {
+      margin-top: 25px; /* Adjust top margin */
+    }
+  }
+  
+  /* Optional for Mobile: Reduce content size if needed */
+  .WB-homepage .main-content {
+    font-size: 1rem;
+    margin-top: 15px;
   }
   
