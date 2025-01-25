@@ -17,6 +17,12 @@
 @media only screen and (max-width: 768px) {
   .WB-homepage {
     padding: 0; /* Remove padding */
-    width: 100vw;  /* Full width */
+    margin:0;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: max-content;
+    height: max-content;  /* Full width */
+    display: flex;
   }
 }

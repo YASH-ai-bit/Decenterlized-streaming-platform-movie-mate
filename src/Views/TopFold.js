@@ -56,14 +56,14 @@ const TopFold = () => {
 
         <div className="text-content">
           <h3 className="logo-grid-title">WATCH WITH FRIENDS</h3>
-          <h1>A new way to <span className="highlight-red">watch together</span></h1>
+          <h1>A new way to <span className="highlight-red">watch together</span>.</h1>
           <p>
             WhiteBoard is a new way to watch TV with your friends online.
-            <br />
+            <br></br><br></br>
             WhiteBoard offers a decentralized platform for streaming your favorite content.
-            <br />
+            <br></br><br></br>
             Sync with friends across Netflix, YouTube, Prime Video, and more, securely
-            through blockchain technology.
+            through blockchain technology.<br></br><br></br>
           </p>
           <button className="cta-button">Learn More</button>
         </div>
