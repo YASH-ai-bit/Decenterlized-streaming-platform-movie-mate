@@ -1,15 +1,27 @@
-/* Overall Header Styling */
+/* Main Wrapper */
+.topfold {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 90%;
+  max-width: 1200px;
+  background-color: #171717;
+  color: #ffffff;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Header Section */
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 20px;
-  background-color: #171717; /* Dark background */
-  color: #ffffff; /* White text */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  border-bottom: 2px solid white;
 }
 
-/* Left Section: Logo and Slogan */
 .header-left {
   display: flex;
   align-items: center;
@@ -27,20 +39,18 @@
   color: #ffffff;
 }
 
-/* Highlighted words */
 .brand-slogan .highlight {
-  font-weight: bold; /* Make words bold */
-  transition: transform 0.2s ease, color 0.3s ease; /* Add smooth transition for hover effects */
-  display: inline-block; /* Ensures transform works properly */
+  font-weight: bold;
+  color: #ffffff;
+  transition: transform 0.2s ease, color 0.3s ease;
 }
 
-/* Hover effect for highlighted words */
 .brand-slogan .highlight:hover {
-  color: #D90C4D; /* Red color on hover */
-  transform: scale(1.05); /* Slightly enlarge the word */
+  color: #d90c4d;
+  transform: scale(1.05);
 }
 
-/* Navigation Menu */
+/* Navigation */
 .header-nav ul {
   display: flex;
   list-style: none;
@@ -56,26 +66,107 @@
   text-decoration: none;
   color: #ffffff;
   font-size: 0.9rem;
-  font-weight: 200;
   transition: color 0.3s ease;
 }
 
 .header-nav a:hover {
-  color: #D90C4D; /* Highlight hover effect */
+  color: #d90c4d;
 }
 
-/* Icons */
-.icons {
-  width: 18px;
-  height: 18px;
-  display: inline-block;
-  vertical-align: middle;
-  margin: 0.5px;
+/* Main Content */
+.main-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-top: 30px;
 }
 
-/* Hover Effect for Icons */
-.icon:hover {
-  filter: none;
-  color: #D90C4D;
+.video-section {
+  flex: 1;
+}
+
+.video-player {
+  width: 100%;
+  border-radius: 5px;
+}
+
+.text-content {
+  flex: 1;
+  color: white;
+  padding: 0 20px;
+  text-align: left;
+}
+
+.text-content h1 {
+  font-size: 2.2rem;
+  margin-bottom: 0px;
+}
+
+.text-content p {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  text-align: left;
+  font-weight: 200;
+}
+
+.cta-button {
+  background-color: #ff4d4d;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.cta-button:hover {
+  background-color: #d90c4d;
+}
+
+/* Logo Grid Section */
+.logo-grid-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 40px;
+}
+
+.logo-grid-title {
+  font-size: 1rem;
+  font-weight: 250;
+  color: #898687;
+  margin-bottom: 0px;
+}
+
+.logo-grid {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.logo-grid-item {
+  width: 90px;
+  height: auto;
+  transition: transform 0.2s ease;
+}
+
+.logo-grid-item:hover {
   transform: scale(1.1);
+}
+
+.youtube {
+  width: 150px;
+}
+
+.netflix,
+.prime,
+.spotify,
+.hbo,
+.hulu,
+.disney {
+  width: 110px;
 }
