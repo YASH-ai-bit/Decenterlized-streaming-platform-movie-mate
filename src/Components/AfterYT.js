@@ -12,7 +12,7 @@ const AfterYT = ({ closeModal }) => {
           <div className="join-room">
             <input
               type="text"
-              placeholder="Enter Room Code"
+              placeholder="Enter Board Code"
               className="room-code-input"
             />
             <button className="btn join-room-btn"><span className="white">Join Board</span></button>
