@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import WBLogo from "../assets/images/logo512_inverted.png";
 import WBSign from "../assets/images/WB-sign-v1.png";
 import searchicon from "../assets/images/SearchIcon.png";
@@ -11,12 +11,25 @@ import Spotify from "../assets/images/Spotifylogo.png";
 import HBO from "../assets/images/HBOlogo.png";
 import Hulu from "../assets/images/Hululogo.png";
 import DisneyHotstar from "../assets/images/DisneyHotstarlogo.png";
+import AfterYT from "../Components/AfterYT";
 import "./TopFold.css";
 
 const TopFold = () => {
+  const [showModal, setShowModal] = useState(false);
+  const [isBlurred, setIsBlurred] = useState(false);
+
+  const handleYouTubeClick = () => {
+    setShowModal(true); // Show the modal
+    setIsBlurred(true);  // Apply blur effect to the background
+  };
+
+  const closeModal = () => {
+    setShowModal(false);  // Close the modal
+    setIsBlurred(false);  // Remove the blur effect
+  };
+
   return (
-    <div className="topfold">
-      {/* Header Section (Navigation Bar) */}
+    <div className={`topfold ${isBlurred ? "blur" : ""}`}>
       <header className="header">
         <div className="header-left">
           <img src={WBLogo} alt="WhiteBoard Logo" className="logo" />
@@ -36,7 +49,6 @@ const TopFold = () => {
         </nav>
       </header>
 
-      {/* Main Content Section */}
       <div className="main-content">
         <div className="video-section">
           <video src={video} autoPlay loop muted className="video-player" alt="AI Video" />
@@ -57,11 +69,15 @@ const TopFold = () => {
         </div>
       </div>
 
-      {/* Logo Grid Section */}
       <div className="logo-grid-section">
         <h3 className="logo-grid-title">Host a Watch Party on:</h3>
         <div className="logo-grid">
-          <img src={YouTube} alt="YouTube" className="logo-grid-item youtube" />
+          <img
+            src={YouTube}
+            alt="YouTube"
+            className="logo-grid-item youtube"
+            onClick={handleYouTubeClick} // Handle click on YouTube logo
+          />
           <img src={Netflix} alt="Netflix" className="logo-grid-item netflix" />
           <img src={DisneyHotstar} alt="Disney Hotstar" className="logo-grid-item disney" />
           <img src={HBO} alt="HBO" className="logo-grid-item hbo" />
@@ -70,6 +86,9 @@ const TopFold = () => {
           <img src={Spotify} alt="Spotify" className="logo-grid-item spotify" />
         </div>
       </div>
+
+      {/* Conditional Rendering of Modal */}
+      {showModal && <AfterYT closeModal={closeModal} />}
     </div>
   );
 };
