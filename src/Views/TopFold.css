@@ -130,12 +130,15 @@
   padding: 10px 20px;
   cursor: pointer;
   font-size: 1.1rem;
+  font-weight: 100;
   border-radius: 5px;
   transition: background-color 0.3s;
 }
 
 .cta-button:hover {
   background-color: #d90c4d;
+  transition: color 0.3s ease;
+  transform: scale(1.02);
 }
 
 /* Logo Grid Section */
