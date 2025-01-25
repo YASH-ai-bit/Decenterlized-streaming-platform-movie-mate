@@ -1,24 +1,28 @@
 /* General Styles */
 /* HomePage Container with White Background */
 .WB-homepage {
-    text-align: center;
-    margin-top: 40px;
-    width: 100%;
-    margin: 0 auto;
-    border-radius: 10px;
-    background-color: white;
-    display: flex;
+  text-align: center;
+  margin: 0;  /* Remove margin */
+  padding: 0;  /* Remove padding */
+  width: 100vw;  /* Full viewport width */
+  height: 100vh; /* Full viewport height */
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+/* Responsive Adjustment for Homepage */
+@media only screen and (max-width: 768px) {
+  .WB-homepage {
+    padding: 0; /* Remove padding */
+    margin:0;
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    min-height: 100vh; /* Full viewport height */
+    width: max-content;
+    height: max-content;  /* Full width */
+    display: flex;
   }
-  
-  
-  /* Responsive Adjustment for Homepage */
-  @media only screen and (max-width: 768px) {
-    .WB-homepage {
-      padding: 20px;
-    }
-  }
-  
+}
