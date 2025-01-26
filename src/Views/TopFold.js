@@ -3,7 +3,7 @@ import WBLogo from "../assets/images/logo512_inverted.png";
 import WBSign from "../assets/images/WB-sign-v1.png";
 import searchicon from "../assets/images/SearchIcon.png";
 import carticon from "../assets/images/StoreIcon.png";
-import video from "../assets/videos/Dev_1.mp4";
+import video from "../assets/videos/All_Intros.mp4";
 import Netflix from "../assets/images/Netflixlogo.png";
 import Prime from "../assets/images/Primelogo.png";
 import YouTube from "../assets/images/YouTubelogo.png";
