@@ -74,14 +74,6 @@ const AfterYT = ({ closeModal }) => {
     }
   };
 
-  function AfterYT() {
-    const navigate = useNavigate();
-  
-    const handleClick = () => {
-      navigate('/some-route');
-    };
-  }
-
   return (
     <div className="after-yt-container">
       <div className="blur-background"></div>

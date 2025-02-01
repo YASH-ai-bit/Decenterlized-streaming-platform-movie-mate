@@ -13,7 +13,7 @@ import Hulu from "../assets/images/Hululogo.png";
 import DisneyHotstar from "../assets/images/DisneyHotstarlogo.png";
 import AfterYT from "../Components/AfterYT";
 import "./TopFold.css";
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
 
 const TopFold = () => {
   const [showModal, setShowModal] = useState(false);
@@ -87,13 +87,8 @@ const TopFold = () => {
           <img src={Spotify} alt="Spotify" className="logo-grid-item spotify" />
         </div>
       </div>
-      <Router>
-        <Routes>
           {/* Conditional Rendering of Modal */}
           {showModal && <AfterYT closeModal={closeModal} />}
-        </Routes>
-      </Router>
-
     </div>
   );
 };
