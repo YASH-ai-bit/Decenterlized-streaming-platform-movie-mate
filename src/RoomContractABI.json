@@ -1,51 +1,17 @@
 [
 	{
 		"inputs": [],
-		"name": "createRoom",
-		"outputs": [
-			{
-				"internalType": "bytes32",
-				"name": "",
-				"type": "bytes32"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "bytes32",
-				"name": "_roomCode",
-				"type": "bytes32"
-			}
-		],
-		"name": "deleteRoom",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "bytes32",
-				"name": "_roomCode",
-				"type": "bytes32"
-			}
-		],
-		"name": "joinRoom",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
 		"name": "Room__AlreadyJoined",
 		"type": "error"
 	},
 	{
 		"inputs": [],
 		"name": "Room__InvalidRoomCode",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "Room__NotEnoughETH",
 		"type": "error"
 	},
 	{
@@ -97,6 +63,19 @@
 		"type": "event"
 	},
 	{
+		"inputs": [],
+		"name": "createRoom",
+		"outputs": [
+			{
+				"internalType": "bytes32",
+				"name": "",
+				"type": "bytes32"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"inputs": [
 			{
 				"internalType": "bytes32",
@@ -113,6 +92,19 @@
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "_roomCode",
+				"type": "bytes32"
+			}
+		],
+		"name": "deleteRoom",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -156,6 +148,19 @@
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "_roomCode",
+				"type": "bytes32"
+			}
+		],
+		"name": "joinRoom",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{

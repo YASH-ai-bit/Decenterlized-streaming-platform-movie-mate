@@ -1,7 +1,7 @@
-import { BrowserProvider, Contract } from "ethers";
+import { BrowserProvider, Contract } from "ethers"; // Import BrowserProvider and Contract
 import RoomContractABI from "./RoomContractABI.json";
 
-const contractAddress = "0xADc4af9DDB9118b678845ACaAE6D805f3c3be8fb";
+const contractAddress = "0x2C3244b037F71A39ef01f89FeFEc1a4132e68EA0";
 
 export const getContract = async () => {
   if (!window.ethereum) {
@@ -9,7 +9,9 @@ export const getContract = async () => {
   }
 
   const provider = new BrowserProvider(window.ethereum); // Use BrowserProvider in Ethers v6
-  const signer = await provider.getSigner(); // Get the signer for the current account 
-  const contract = new Contract(contractAddress, RoomContractABI, signer);  
+  const signer = await provider.getSigner(); // Get the signer for the current account
+  const contract = new Contract(contractAddress, RoomContractABI, signer); // Use Contract directly
   return contract;
 };
+
+export default getContract;

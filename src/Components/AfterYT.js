@@ -1,13 +1,17 @@
-import React, { useState } from "react";
+// AfterYT.js
+import React, { useState, useEffect } from "react";
 import { getContract } from "../Room.js"; // Import the web3.js file
+import { firestore } from "../firebase.js"; // Import Firebase
+import { doc, setDoc, updateDoc, onSnapshot } from "firebase/firestore";
 import "./AfterYT.css";
 
 const AfterYT = ({ closeModal }) => {
   const [roomCode, setRoomCode] = useState("");
   const [isCreating, setIsCreating] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
+  const [partyLink, setPartyLink] = useState("");
 
-
+  // Connect to MetaMask
   const connectWallet = async () => {
     try {
       if (!window.ethereum) {
@@ -18,46 +22,57 @@ const AfterYT = ({ closeModal }) => {
     } catch (error) {
       console.error("Error connecting wallet:", error.message);
     }
-  };  
+  };
 
   // Create Room Handler
   const handleCreateBoard = async () => {
     try {
-      setIsCreating(true); // Start loading
-      const contract = await getContract(); // Get the smart contract instance
-      const tx = await contract.createRoom(); // Call createRoom
-      console.log("Transaction Sent:", tx); // Log transaction object
+      setIsCreating(true);
+      await connectWallet();
+      const accounts = await window.ethereum.request({ method: "eth_accounts" });
+      const userAddress = accounts[0];
   
-      const receipt = await tx.wait(); // Wait for transaction confirmation
-      console.log("Transaction Receipt:", receipt); // Log receipt for debugging
-
-      console.log("Transaction Hash:", tx.hash);
-      console.log("Receipt Events:", receipt.events);
-      console.log("Room Code Extracted:", roomCode);
+      const contract = await getContract();
+      const tx = await contract.createRoom();
+      const receipt = await tx.wait();
   
-      // Extract roomCode from the receipt
-      const event = receipt.events?.find((event) => event.event === "RoomCreated");
-      console.log("Event Data:", event); // Log event data
+      // Extract roomCode
+      const eventLog = receipt.logs.find(log => {
+        try {
+          return contract.interface.parseLog(log)?.name === "RoomCreated";
+        } catch {
+          return false;
+        }
+      });
   
-      if (!event) {
-        throw new Error("RoomCreated event not found in receipt.");
-      }
+      if (!eventLog) throw new Error("RoomCreated event not found.");
   
-      const roomCode = event.args?.roomCode; // Extract roomCode
-      if (!roomCode) {
-        throw new Error("Room code not found in event args.");
-      }
+      const decoded = contract.interface.parseLog(eventLog);
+      const roomCodeHex = decoded.args.roomCode; // This is already a hex string (e.g., "0x21b9c658...")
   
-      alert(`Board created successfully! Code: ${roomCode}`);
+      // ✅ Convert to Firestore-safe string (remove "0x" and lowercase)
+      const roomCodeSanitized = roomCodeHex.slice(2).toLowerCase();
+  
+      // Save to Firestore
+      await setDoc(doc(firestore, "rooms", roomCodeSanitized), {
+        creatorId: userAddress,
+        users: [userAddress],
+        video: null,
+        playbackState: { isPlaying: false, currentTime: 0 },
+      });
+  
+      // Generate link
+      const syncLink = `${window.location.origin}/join/${roomCodeSanitized}`;
+      setPartyLink(syncLink);
+      alert(`Success! Share this link: ${syncLink}`);
+  
     } catch (error) {
-      console.error("Error creating board:", error.message || error);
-      alert("Failed to create board. Check console for details.");
+      console.error("Error creating board:", error);
+      alert(`Failed: ${error.message}`);
     } finally {
-      setIsCreating(false); // Stop loading
+      setIsCreating(false);
     }
   };
-  
-  
 
   // Join Room Handler
   const handleJoinBoard = async () => {
@@ -67,9 +82,18 @@ const AfterYT = ({ closeModal }) => {
         return;
       }
       setIsJoining(true);
-      const contract = await getContract();
-      const tx = await contract.joinRoom(roomCode); // Call the smart contract function
-      await tx.wait(); // Wait for the transaction to complete
+
+      // Connect to MetaMask and get the user's address
+      await connectWallet();
+      const accounts = await window.ethereum.request({ method: "eth_accounts" });
+      const userAddress = accounts[0];
+
+      // Add user to the room in Firestore
+      const roomRef = doc(firestore, "rooms", roomCode);
+      await updateDoc(roomRef, {
+        users: [...(roomRef.data()?.users || []), userAddress], // Add the user to the users list
+      });
+
       alert(`Successfully joined board: ${roomCode}`);
     } catch (error) {
       console.error("Error joining board:", error.message);
@@ -79,12 +103,35 @@ const AfterYT = ({ closeModal }) => {
     }
   };
 
+  // Real-Time Playback Synchronization
+  useEffect(() => {
+    if (!roomCode) return;
+
+    const roomRef = doc(firestore, "rooms", roomCode);
+    const unsubscribe = onSnapshot(roomRef, (snapshot) => {
+      const roomData = snapshot.data();
+      if (roomData) {
+        const { isPlaying, currentTime } = roomData.playbackState;
+
+        // Control the YouTube player
+        const video = document.querySelector("video");
+        if (video) {
+          if (isPlaying) video.play();
+          else video.pause();
+          video.currentTime = currentTime;
+        }
+      }
+    });
+
+    return () => unsubscribe(); // Cleanup listener
+  }, [roomCode]);
+
   return (
     <div className="after-yt-container">
       <div className="blur-background"></div>
       <div className="modal">
         <h2 className="modal-heading">
-          You<span className="red">Tube</span> - Over the Board!
+          You<span className="red">Tube</span> - Over the Party!
         </h2>
         <div className="button-container">
           <button
@@ -92,12 +139,26 @@ const AfterYT = ({ closeModal }) => {
             onClick={handleCreateBoard}
             disabled={isCreating}
           >
-            <span className="white">{isCreating ? "Creating..." : "Create Board"}</span>
+            <span className="white">{isCreating ? "Creating..." : "Create Party"}</span>
           </button>
+
+          {partyLink && (
+            <div className="party-link-container">
+              <p>Share this link:</p>
+              <input type="text" value={partyLink} readOnly className="party-link-input" />
+              <button
+                className="btn copy-btn"
+                onClick={() => navigator.clipboard.writeText(partyLink)}
+              >
+                Copy Link
+              </button>
+            </div>
+          )}
+
           <div className="join-room">
             <input
               type="text"
-              placeholder="Enter Board Code"
+              placeholder="Enter Party Code"
               className="room-code-input"
               value={roomCode}
               onChange={(e) => setRoomCode(e.target.value)}
@@ -107,7 +168,7 @@ const AfterYT = ({ closeModal }) => {
               onClick={handleJoinBoard}
               disabled={isJoining}
             >
-              <span className="white">{isJoining ? "Joining..." : "Join Board"}</span>
+              <span className="white">{isJoining ? "Joining..." : "Join Party"}</span>
             </button>
           </div>
         </div>

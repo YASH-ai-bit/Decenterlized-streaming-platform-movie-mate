@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import WBLogo from "../assets/images/logo512_inverted.png";
-import WBSign from "../assets/images/WB-sign-v1.png";
+import MMLogo from "../assets/images/MM-logo.png";
+import MMSign from "../assets/images/MM-sign-v1.png";
 import searchicon from "../assets/images/SearchIcon.png";
 import carticon from "../assets/images/StoreIcon.png";
 import video from "../assets/videos/All_Intros.mp4";
@@ -32,7 +32,7 @@ const TopFold = () => {
     <div className={`topfold ${isBlurred ? "blur" : ""}`}>
       <header className="header">
         <div className="header-left">
-          <img src={WBLogo} alt="WhiteBoard Logo" className="logo" />
+          <img src={MMLogo} alt="MovieMate Logo" className="logo" />
           <span className="brand-slogan">
             Watch <span className="highlight">Anywhere</span> and with{" "}
             <span className="highlight">Anyone</span>.
@@ -55,12 +55,12 @@ const TopFold = () => {
         </div>
 
         <div className="text-content">
-          <h3 className="logo-grid-title">WATCH WITH FRIENDS</h3>
+          <h3 className="logo-grid-title">WATCH WITH FRIENDS!</h3>
           <h1>A new way to <span className="highlight-red">watch together</span>.</h1>
           <p>
-            WhiteBoard is a new way to watch TV with your friends online.
+            MovieMate is a new way to watch TV with your friends online.
             <br></br><br></br>
-            WhiteBoard offers a decentralized platform for streaming your favorite content.
+            MovieMate offers a decentralized platform for streaming your favorite content.
             <br></br><br></br>
             Sync with friends across Netflix, YouTube, Prime Video, and more, securely
             through blockchain technology.<br></br><br></br>
