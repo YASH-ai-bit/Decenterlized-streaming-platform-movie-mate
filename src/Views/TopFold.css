@@ -217,12 +217,14 @@ body {
   padding: 0 10px;
 }
 
+
+
 /* Mobile Styles */
 @media only screen and (max-width: 768px) {
   .topfold {
-    padding: 0 0; /* Remove extra padding */
+    padding: 0 0; 
     height: max-content;
-    width: 100%;  /* Full width */
+    width: 100%;  
   }
   .header {
     width: 90%;
@@ -251,11 +253,10 @@ body {
   }
 }
 
-
 /* Tablet Styles */
 @media only screen and (max-width: 1024px) {
   .topfold {
-    width: 100vw;  /* Ensure full width */
+    width: 100vw;  
   }
 
   .text-content h1 {

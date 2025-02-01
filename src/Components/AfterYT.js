@@ -1,63 +1,58 @@
-import React, { useState } from "react";
-import { getContract } from "../Room.js"; // Import the web3.js file
+import React, { useState, useEffect } from "react";
+import { getContract } from "../Room.js";
+import { useNavigate } from "react-router-dom";
+import { io } from "socket.io-client";
 import "./AfterYT.css";
+
+const socket = io("http://localhost:3001", {
+  transports: ["websocket"],
+});
 
 const AfterYT = ({ closeModal }) => {
   const [roomCode, setRoomCode] = useState("");
   const [isCreating, setIsCreating] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
+  const navigate = useNavigate();
 
-
-  const connectWallet = async () => {
-    try {
-      if (!window.ethereum) {
-        throw new Error("MetaMask is not installed.");
-      }
-      await window.ethereum.request({ method: "eth_requestAccounts" });
-      alert("Wallet connected!");
-    } catch (error) {
-      console.error("Error connecting wallet:", error.message);
+  useEffect(() => {
+    if (roomCode) {
+      socket.emit("join-board", roomCode);
     }
-  };  
+
+    // Listen for redirection event
+    socket.on("redirect-to-youtube", (data) => {
+      console.log(`Redirecting users in room ${data.roomCode} to YouTube page`);
+      navigate(`/youtube/${data.roomCode}`);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [roomCode, navigate]); // Dependency array ensures it only runs when `roomCode` changes
 
   // Create Room Handler
   const handleCreateBoard = async () => {
     try {
-      setIsCreating(true); // Start loading
-      const contract = await getContract(); // Get the smart contract instance
-      const tx = await contract.createRoom(); // Call createRoom
-      console.log("Transaction Sent:", tx); // Log transaction object
-  
-      const receipt = await tx.wait(); // Wait for transaction confirmation
-      console.log("Transaction Receipt:", receipt); // Log receipt for debugging
-
-      console.log("Transaction Hash:", tx.hash);
-      console.log("Receipt Events:", receipt.events);
-      console.log("Room Code Extracted:", roomCode);
-  
-      // Extract roomCode from the receipt
+      setIsCreating(true);
+      const contract = await getContract();
+      const tx = await contract.createRoom();
+      const receipt = await tx.wait();
       const event = receipt.events?.find((event) => event.event === "RoomCreated");
-      console.log("Event Data:", event); // Log event data
-  
-      if (!event) {
-        throw new Error("RoomCreated event not found in receipt.");
-      }
-  
-      const roomCode = event.args?.roomCode; // Extract roomCode
-      if (!roomCode) {
-        throw new Error("Room code not found in event args.");
-      }
-  
-      alert(`Board created successfully! Code: ${roomCode}`);
+
+      if (!event) throw new Error("RoomCreated event not found.");
+
+      const generatedRoomCode = event.args?.roomCode;
+      if (!generatedRoomCode) throw new Error("Room code not found in event args.");
+
+      setRoomCode(generatedRoomCode);
+      alert(`Board created successfully! Code: ${generatedRoomCode}`);
     } catch (error) {
-      console.error("Error creating board:", error.message || error);
-      alert("Failed to create board. Check console for details.");
+      console.error("Error creating board:", error.message);
+      alert("Failed to create board.");
     } finally {
-      setIsCreating(false); // Stop loading
+      setIsCreating(false);
     }
   };
-  
-  
 
   // Join Room Handler
   const handleJoinBoard = async () => {
@@ -68,16 +63,24 @@ const AfterYT = ({ closeModal }) => {
       }
       setIsJoining(true);
       const contract = await getContract();
-      const tx = await contract.joinRoom(roomCode); // Call the smart contract function
-      await tx.wait(); // Wait for the transaction to complete
+      const tx = await contract.joinRoom(roomCode);
+      await tx.wait();
       alert(`Successfully joined board: ${roomCode}`);
     } catch (error) {
       console.error("Error joining board:", error.message);
-      alert("Failed to join board. Either you've already joined or the board doesn't exist.");
+      alert("Failed to join board.");
     } finally {
       setIsJoining(false);
     }
   };
+
+  function AfterYT() {
+    const navigate = useNavigate();
+  
+    const handleClick = () => {
+      navigate('/some-route');
+    };
+  }
 
   return (
     <div className="after-yt-container">
