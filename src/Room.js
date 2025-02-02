@@ -13,3 +13,4 @@ export const getContract = async () => {
   const contract = new Contract(contractAddress, RoomContractABI, signer);  
   return contract;
 };
+export default getContract;

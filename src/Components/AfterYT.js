@@ -1,8 +1,7 @@
-// AfterYT.js
 import React, { useState, useEffect } from "react";
-import { getContract } from "../Room.js"; // Import the web3.js file
-import { db } from "../firebase.js"; // Import Firestore
-import { doc, setDoc, updateDoc, onSnapshot } from "firebase/firestore"; // Firestore functions
+import io from "socket.io-client"; 
+import { getContract } from "../Room.js";
+import { keccak256, toUtf8Bytes } from "ethers";
 import "./AfterYT.css";
 
 const AfterYT = ({ closeModal }) => {
@@ -10,6 +9,7 @@ const AfterYT = ({ closeModal }) => {
   const [isCreating, setIsCreating] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
   const [partyLink, setPartyLink] = useState("");
+  const [socket, setSocket] = useState(null); 
 
   // Connect to MetaMask
   const connectWallet = async () => {
@@ -24,63 +24,78 @@ const AfterYT = ({ closeModal }) => {
     }
   };
 
+  // WebSocket connection setup using Socket.io
+  useEffect(() => {
+    const newSocket = io("http://localhost:8080"); 
+    setSocket(newSocket);
+
+    newSocket.on("connect", () => {
+      console.log("Connected to WebSocket server.");
+    });
+
+    // Listen for playback updates from the server
+    newSocket.on("playback", (data) => {
+      const video = document.querySelector("video");
+      if (video) {
+        if (data.action === "play") {
+          video.play();
+        } else if (data.action === "pause") {
+          video.pause();
+        } else if (data.action === "seek") {
+          video.currentTime = data.currentTime;
+        }
+      }
+    });
+
+    // Cleanup on component unmount
+    return () => {
+      newSocket.close();
+    };
+  }, []);
+
   // Create Room Handler
   const handleCreateBoard = async () => {
     try {
-      setIsCreating(true); // Start loading
-      await connectWallet(); // Connect to MetaMask
+      setIsCreating(true); 
+      await connectWallet(); 
       const accounts = await window.ethereum.request({ method: "eth_accounts" });
-      const userAddress = accounts[0]; // Get the user's address
-
-      // Generate a room code using the smart contract
-      const contract = await getContract();
-      const tx = await contract.createRoom();
+      const userAddress = accounts[0]; 
+  
+      // Call the smart contract to create a room
+      const contract = await getContract(); 
+      const tx = await contract.createRoom(); 
       const receipt = await tx.wait();
-
-      // ✅ Extract Room Code from Event Logs
-      const eventLog = receipt.logs.find(log => {
-        try {
-          const decoded = contract.interface.parseLog(log);
-          return decoded?.name === "RoomCreated";
-        } catch {
-          return false;
-        }
-      });
-
+  
+      // Event signature for RoomCreated (bytes32 indexed roomCode, address indexed creator)
+      const eventSignature = "RoomCreated(bytes32,address)";
+      const eventTopic = keccak256(toUtf8Bytes(eventSignature));
+  
+      // Find the event log that matches the event topic
+      const eventLog = receipt.logs.find((log) => log.topics[0] === eventTopic);
       if (!eventLog) {
-        throw new Error("RoomCreated event not found.");
+        throw new Error("RoomCreated event not found in transaction logs.");
+      }
+  
+      const roomCodeTopic = eventLog.topics[1]; 
+      if (!roomCodeTopic) {
+        throw new Error("Room code not found in event topics.");
       }
 
-      const decoded = contract.interface.parseLog(eventLog);
-      const roomCode = decoded.args.roomCode; // Extract the roomCode
-      const creator = decoded.args.creator;
-
-      if (!roomCode) {
-        throw new Error("Room code extraction failed.");
-      }
-
-      console.log("Extracted Room Code:", roomCode);
-
-      // ✅ Store room information in Firestore
-      await setDoc(doc(db, "rooms", roomCode), {
-        creatorId: creator,
-        users: [creator],
-        video: null,
-        playbackState: { isPlaying: false, currentTime: 0 },
-      });
-
-      console.log("Room saved to Firestore successfully!");
-
-      // ✅ Generate YouTube Party Link
-      const syncLink = `${window.location.origin}/join/${roomCode}`;
+      const roomCodeHex = `0x${roomCodeTopic.slice(26)}`; 
+      setRoomCode(roomCodeHex); 
+      console.log("Extracted Room Code (Hex):", roomCodeHex);
+  
+      socket.emit("createRoom", { roomCode: roomCodeHex, creator: userAddress });
+  
+      const syncLink = `https://www.youtube.com/watch?v=${roomCodeHex}`;
       setPartyLink(syncLink);
-
+  
       alert(`Successfully created board! Share this link: ${syncLink}`);
     } catch (error) {
       console.error("Error creating board:", error.message || error);
       alert(`Failed to create board: ${error.message}`);
     } finally {
-      setIsCreating(false); // Stop loading
+      setIsCreating(false);
     }
   };
 
@@ -93,16 +108,11 @@ const AfterYT = ({ closeModal }) => {
       }
       setIsJoining(true);
 
-      // Connect to MetaMask and get the user's address
       await connectWallet();
       const accounts = await window.ethereum.request({ method: "eth_accounts" });
       const userAddress = accounts[0];
 
-      // Add user to the room in Firestore
-      const roomRef = doc(db, "rooms", roomCode);
-      await updateDoc(roomRef, {
-        users: [...(roomRef.data()?.users || []), userAddress], // Add the user to the users list
-      });
+      socket.emit("joinRoom", { roomCode, userAddress });
 
       alert(`Successfully joined board: ${roomCode}`);
     } catch (error) {
@@ -113,28 +123,31 @@ const AfterYT = ({ closeModal }) => {
     }
   };
 
-  // Real-Time Playback Synchronization
   useEffect(() => {
-    if (!roomCode) return;
-
-    const roomRef = doc(db, "rooms", roomCode);
-    const unsubscribe = onSnapshot(roomRef, (snapshot) => {
-      const roomData = snapshot.data();
-      if (roomData) {
-        const { isPlaying, currentTime } = roomData.playbackState;
-
-        // Control the YouTube player
-        const video = document.querySelector("video");
-        if (video) {
-          if (isPlaying) video.play();
-          else video.pause();
-          video.currentTime = currentTime;
-        }
-      }
-    });
-
-    return () => unsubscribe(); // Cleanup listener
-  }, [roomCode]);
+    if (!roomCode || !socket) return;
+    const video = document.querySelector("video");
+    if (video) {
+      video.onplay = () => {
+        socket.emit("playback", {
+          action: "play",
+          roomCode,
+        });
+      };
+      video.onpause = () => {
+        socket.emit("playback", {
+          action: "pause",
+          roomCode,
+        });
+      };
+      video.onseeked = () => {
+        socket.emit("playback", {
+          action: "seek",
+          currentTime: video.currentTime,
+          roomCode,
+        });
+      };
+    }
+  }, [roomCode, socket]);
 
   return (
     <div className="after-yt-container">
